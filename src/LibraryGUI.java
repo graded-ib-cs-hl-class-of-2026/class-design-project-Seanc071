@@ -1,16 +1,16 @@
-import java.awt.FlowLayout; // gap between the texts
-import java.awt.Font; // font
-import java.awt.GridLayout; // how the column and row is organzied
-import java.awt.KeyEventDispatcher; // explained below
-import java.awt.KeyboardFocusManager; // explained below
-import java.awt.event.KeyEvent; // explained below
-import javax.swing.JButton; // Used JButton class to create a push button on the UI
-import javax.swing.JFrame;// Used to render a read only text label or images on the UI
-import javax.swing.JLabel;// used for createing dialog boxes for displaying a meesage, confirm box, or input dialog box
-import javax.swing.JOptionPane;// used for the password, and we can edit them
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;//renders an editable single-line text box
-import javax.swing.JTextField; //The Font class represents fonts, which are used to render text in a visible way
+import java.awt.FlowLayout; // Used to read text from a file line by line efficiently
+import java.awt.Font;// Used to write text to a file efficiently
+import java.awt.GridLayout; // A class that reads raw character data from a file
+import java.awt.KeyEventDispatcher; // A class that writes raw character data to a file
+import java.awt.KeyboardFocusManager; // Signals that an I/O exception of some sort has occurred
+import java.awt.event.KeyEvent;// represents date and time
+import javax.swing.JButton;// format of the time
+import javax.swing.JFrame; // gap between the texts
+import javax.swing.JLabel; // font
+import javax.swing.JOptionPane; // how the column and row is organzied
+import javax.swing.JPanel; // explained below
+import javax.swing.JPasswordField; // explained below
+import javax.swing.JTextField; // explained below
 // https://docs.oracle.com/javase/8/docs/api/java/awt/package-summary.html
 // https://docs.oracle.com/javase/7/docs/api/java/awt/package-summary.html
 
@@ -32,25 +32,47 @@ https://stackoverflow.com/questions/9347076/how-to-remove-all-components-from-a-
 
 /**Class for LibrarayGUI */
 public class LibraryGUI {
+    
     private String registeredID = null;
     private String registeredPassWord = null; //stores registered ID and password
     private Book[] books = new Book[5]; //array holds 5 books in the library
     private JFrame frame = new JFrame(); //creates GUI, https://docs.oracle.com/javase/tutorial/uiswing/components/frame.html
-    private String[] requestedBooks = new String[5]; //it stores up to 100 book requests
+    private String[] requestedBooks = new String[100]; //it stores up to 100 book requests
     private int requestedCount = 0; //keeps track of how may have been requested
     private boolean isOnMainMenu = false; //I created a boolean(for the manager page) so that the manager page can only open in the main menu
+     // 2d array that can store up to 100 user, and sotre 2 value(id and password)
+    private String[][] users = new String[100][2];
+     // keeps track of how many useres are currently stored in the useres array
+    private int userCount = 0;
+    // declared a variable to hold an object of the class LibraryFileHandler
+    private LibraryFileHandler fileHandler;
 
-/**book listed */
+
+
+
+
+    
+
+
+
+
+
+
+
+
+    /**LibraryGUI */
     public LibraryGUI(){
-        books[0] = new Book("Harry Potter", "J.K. Rowling", false, "","0001");
-        books[1] = new Book("Maze Runner", "James Dashner", false,"","0002");
-        books[2] = new Book("Hunger Game", "Suzanne Collins", false,"","0003");
-        books[3] = new Book("Empire of Ants", "Bernard Werber", false,"","0004");
-        books[4] = new Book("Diary of a Wimpy Kid", "JJeff Kinney", false,"","0005");
-        frame.setSize(500, 500); //setting the frame size
+        // callows the libraryfilehandler work with the library's data
+        fileHandler = new LibraryFileHandler(frame, books, users, userCount, requestedBooks, requestedCount, registeredID);
+        // updates userCout in the GUI to match how many useres were acutally loaded from the file
+        fileHandler.loadUsersFromFile();
+        userCount = fileHandler.loadUsersFromFile();  // reads the book data from books.txt and loads it into the books array
+        fileHandler.BooksFile();
+
+        frame.setSize(500, 500); // setting the frame size
        
        
-       //first, goes through the login page
+       // first, goes through the login page
         Login();
         
 // If the keyboard Alt + m is typed at the main menu
@@ -69,7 +91,7 @@ a.addKeyEventDispatcher(new KeyEventDispatcher() {
                     ManagerPage();
                     return true;// this return true make the typing(alt + m) doesn't go to anywhere else(key blocked)
                 }
-                return false;//key works normally
+                return false;// key works normally
             }
         });
 
@@ -77,7 +99,9 @@ a.addKeyEventDispatcher(new KeyEventDispatcher() {
     }
 
 
-    
+
+
+
 
 
 
@@ -85,82 +109,99 @@ a.addKeyEventDispatcher(new KeyEventDispatcher() {
 
 
 /**Login page */
-    private void Login(){
-        // for the key press thing, it is false so that the manager page won't work
-         isOnMainMenu = false;
-         // removes the original page's button, text..etc
-         // this is the original page but for example if you go to the register page and come back, I don't want that register page text and button remain, so i delete it
-        frame.getContentPane().removeAll();
-        // tells that the frame use grid layout with 5 rows and 1 column
-        frame.setLayout(new GridLayout(5,1));
-        
-        // creates a label text on screen saying SC's LIBRARY placing it center
-        JLabel title = new JLabel("SC's LIBRARY", JLabel.CENTER);
-        // set title font, bold,and size
-        title.setFont(new Font("DialogInput",Font.BOLD,35));
-        // set the color for title
-        title.setForeground(new java.awt.Color(0, 102, 204)); // blue color
-        //https://chatgpt.com/share/6802c383-62ec-8007-8a73-6152b3c3e856
+private void Login(){
+    // for the key press thing, it is false so that the manager page won't work
+     isOnMainMenu = false;
+     // removes the original page's button, text..etc
+     // this is the original page but for example if you go to the register page and come back, I don't want that register page text and button remain, so i delete it
+    frame.getContentPane().removeAll();
+    // tells that the frame use grid layout with 5 rows and 1 column
+    frame.setLayout(new GridLayout(5,1));
+    
+    // creates a label text on screen saying SC's LIBRARY placing it center
+    JLabel title = new JLabel("SC's LIBRARY", JLabel.CENTER);
+    // set title font, bold,and size
+    title.setFont(new Font("DialogInput",Font.BOLD,35));
+    // set the color for title
+    title.setForeground(new java.awt.Color(0, 102, 204)); // blue color
+    //https://chatgpt.com/share/6802c383-62ec-8007-8a73-6152b3c3e856
 
-        // creates text box for ID
-        JTextField id = new JTextField();
-        // creates text box for Password
-        JPasswordField passWord = new JPasswordField();
-        // creates button for asking Login
-        JButton login = new JButton("Login");
-        // creates button asking Register
-        JButton register = new JButton("Register");
-        
-        // setting button's color, font and size
-        login.setBackground(new java.awt.Color(0, 153, 255));    // light blue
-        login.setForeground(java.awt.Color.WHITE);  
-        login.setFont(new Font("DialogInput", Font.BOLD, 16));
-        register.setBackground(new java.awt.Color(0, 204, 102)); // green
-        register.setForeground(java.awt.Color.WHITE);
-        register.setFont(new Font("DialogInput", Font.BOLD, 16));
-        
-        // It makes the login button get clicked automatically when the user presses enter on the keyboard
-        frame.getRootPane().setDefaultButton(login);  
-        
-        // created a JPanel(mini box) and named a. the flowLayout shows where to place and the gap betwwen them
-        JPanel a = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
-        //panel i want to add
-        a.add(login);
-        a.add(register);
+    // creates text box for ID
+    JTextField id = new JTextField();
+    // creates text box for Password
+    JPasswordField passWord = new JPasswordField();
+    // creates button for asking Login
+    JButton login = new JButton("Login");
+    // creates button asking Register
+    JButton register = new JButton("Register");
+    
+    // setting button's color, font and size
+    login.setBackground(new java.awt.Color(0, 153, 255));    // light blue
+    login.setForeground(java.awt.Color.WHITE);  
+    login.setFont(new Font("DialogInput", Font.BOLD, 16));
+    register.setBackground(new java.awt.Color(0, 204, 102)); // green
+    register.setForeground(java.awt.Color.WHITE);
+    register.setFont(new Font("DialogInput", Font.BOLD, 16));
+    
+    // It makes the login button get clicked automatically when the user presses enter on the keyboard
+    frame.getRootPane().setDefaultButton(login);  
+    
+    // created a JPanel(mini box) and named a. the flowLayout shows where to place and the gap betwwen them
+    JPanel a = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
+    //panel i want to add
+    a.add(login);
+    a.add(register);
 
-        // Added the thing i set above
-        frame.add(title);
-        frame.add(id);
-        frame.add(passWord);
-        frame.add(a);    
+    // Added the thing i set above
+    frame.add(title);
+    frame.add(id);
+    frame.add(passWord);
+    frame.add(a);    
 
-        // for login text box, if I click the box, 
-        login.addActionListener(click -> {
-            // make the user can text in the text box
-            String ID = id.getText();
-            // as JPasswordField use char[] i need in this form
-            String PassWord = new String(passWord.getPassword());
-            
-            // if either ID or PassWord text box is empty, print that message
-            if (ID.isEmpty() || PassWord.isEmpty()) {  
-                JOptionPane.showMessageDialog(frame, "Please enter your ID and Password");
-                return;
+    // for login text box, if I click the box, 
+    login.addActionListener(click -> {
+        // make the user can text in the text box
+        String ID = id.getText();
+        // as JPasswordField use char[] i need in this form
+        String PassWord = new String(passWord.getPassword());
+        
+        // if either ID or PassWord text box is empty, print that message
+        if (ID.isEmpty() || PassWord.isEmpty()) {  
+            JOptionPane.showMessageDialog(frame, "Please enter your ID and Password");
+            return;
+        }
+   boolean found = false;
+        for (int i = 0; i < userCount; i++) {
+            if (users[i][0].equals(ID) && users[i][1].equals(PassWord)) {
+                registeredID = ID;
+                registeredPassWord = PassWord;
+                // tells who is currently logged in by giving the file registeredID
+                 fileHandler.setRegisteredID(registeredID); 
+                found = true;
+                break;
             }
-        // if the ID and password in the text box is equal to reigstered password and id, show main menu
-            if (ID.equals(registeredID)
-            && PassWord.equals(registeredPassWord)) {
+        } if (found) {
+            // this tells to write login thing in the logins.txt
+        fileHandler.logSession("logged in");
             MainMenu();
-            } 
-            // else show message
-            else {
+        } else {
             JOptionPane.showMessageDialog(frame, "Wrong ID or password"); 
-            }
-            });
-            
-            // when clicked register, go to Register Page
-        register.addActionListener(click -> RegisterPage());
-        frame.setVisible(true);
-    }
+        }
+    });
+        
+        // when clicked register, go to Register Page
+    register.addActionListener(click -> RegisterPage());
+    frame.setVisible(true);
+}
+
+
+
+
+
+
+
+
+
 
 
 
@@ -196,16 +237,51 @@ a.addKeyEventDispatcher(new KeyEventDispatcher() {
         String newId = newid.getText();
         String newPass = new String(newpassWord.getPassword());
 
-        if (!newId.isEmpty() && !newPass.isEmpty()) {
-            registeredID = newId;
-            registeredPassWord = newPass;
-            JOptionPane.showMessageDialog(frame, "Registered successfully!");
-              frame.getContentPane().removeAll();
-            Login(); // go back to login screen
-        } else {
-            JOptionPane.showMessageDialog(frame, "Please fill out both fields");
-        }
-    });
+
+
+
+
+
+
+
+
+
+
+       if (!newId.isEmpty() && !newPass.isEmpty()) {
+                // this checks if the ueser id is already taken
+                if (fileHandler.isDuplicateUser(newId)) {
+                    JOptionPane.showMessageDialog(frame, "This ID already exists. Try a different one.");
+                    return;
+                }
+                // stores the new id and pssword in the useres[][] array
+                users[userCount][0] = newId;
+                users[userCount][1] = newPass;
+                // increase user cout so the ntext user goes to next row
+                userCount++;
+                // updates the user count
+                fileHandler.setUserCount(userCount); 
+                // save user name with id and password in the users.txt
+                fileHandler.saveUserToFile("users.txt", newId, newPass);
+                registeredID = newId;
+                registeredPassWord = newPass;
+                 fileHandler.setRegisteredID(registeredID); // update the registered id in both gui and file 
+
+                JOptionPane.showMessageDialog(frame, "Registered successfully!");
+                Login();
+            } else {
+                JOptionPane.showMessageDialog(frame, "Please fill out both box");
+            }
+        });
+
+
+
+
+
+
+
+
+
+
     // if pressed back go to login page
     back.addActionListener(click -> Login());
 
@@ -214,16 +290,16 @@ a.addKeyEventDispatcher(new KeyEventDispatcher() {
 
 
     // create panel, setting its location
-    JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
+    JPanel button = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
     // panel i want to add
-    buttonPanel.add(confirm);
-    buttonPanel.add(back);
+    button.add(confirm);
+    button.add(back);
     
     // add in the tab that i set above
     frame.add(title);
     frame.add(newid);
     frame.add(newpassWord);
-    frame.add(buttonPanel);
+    frame.add(button);
 
     // tells the frame to check if the layout or componet have changed(changed in above)
     frame.revalidate();
@@ -264,7 +340,11 @@ a.addKeyEventDispatcher(new KeyEventDispatcher() {
         checkin.addActionListener(click -> checkinandout("Check In"));
         request.addActionListener(click -> showRequestPage());
         find.addActionListener(click -> FinderPage());
-        exit.addActionListener(click -> Login());
+        exit.addActionListener(click -> {
+            // make the logins.txt to write logged out
+            fileHandler.logSession("logged out");
+            Login();
+        });
         request.addActionListener(click -> showRequestPage());
 
         
@@ -321,18 +401,33 @@ a.addKeyEventDispatcher(new KeyEventDispatcher() {
                 if(book.getCode().equals(code)){
                     // if the user clicked the check out button, and book wasn't checked out originally
                     if(action.equals("Check Out") && !book.checkedout()){
-                        // if the book is checked out store the value as unavailable
-                        book.checkOut("Unavailable");
+                        // if the book is checked it shows the borrower's id
+                        book.checkOut(registeredID);
                         result.setText("Successfully checked out! Return in 2 weeks!");
+
+
+
+                        // saves the updated list of books to the books.txt
+                        fileHandler.saveBooksToFile("books.txt");
+                        // in the borrowlog.txt say it is borrowed by someone
+                        fileHandler.logBorrowAction("checked out", book);
+                        
+
                         
                         // else if the user clicked check in button and book is checked out
                     }else if(action.equals("Check In") && book.checkedout()){
-                        // store the fact that the book is checked in 
-                        book.checkIn();
-                        result.setText("Successfully checked in! Thank you!");
-                       
-                    // else cases
-                    }else if (action.equals("Check Out")) {
+    if (book.getBorrower().equals(registeredID)) {
+        book.checkIn();
+        result.setText("Successfully checked in! Thank you!");
+        //same thing as above
+    fileHandler.saveBooksToFile("books.txt");
+    fileHandler.logBorrowAction("checked in", book);
+
+    } else {
+        result.setText("You did not check out this book.");
+    }
+    }
+    else if (action.equals("Check Out")) {
                         
                         result.setText("Book already checked out.");
                     } else {
@@ -369,16 +464,6 @@ a.addKeyEventDispatcher(new KeyEventDispatcher() {
         frame.revalidate();
         frame.repaint();
     }
-
-
-
-
-
-
-
-
-
-
 
 
     /**page for the request books */
@@ -481,12 +566,15 @@ private void ManagerPage() {
        ManagerPage(); 
     });
 // same thing
+    JButton export = new JButton("Export Book Catalog");
+    export.addActionListener(click -> fileHandler.CatalogFile());
+    
     JButton back = new JButton("Back to Main Menu");
     back.addActionListener(click -> MainMenu());
 
     frame.add(clear); // Add clear button
     frame.add(back);  // Add back button
-
+    frame.add(export);
 
 // same thing
     frame.revalidate();
