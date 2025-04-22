@@ -1,5 +1,0 @@
-a|d
-b|d
-ag|a
-ahd|a
-a|d

@@ -13,7 +13,7 @@ import javax.swing.JPasswordField; // explained below
 import javax.swing.JTextField; // explained below
 // https://docs.oracle.com/javase/8/docs/api/java/awt/package-summary.html
 // https://docs.oracle.com/javase/7/docs/api/java/awt/package-summary.html
-
+// https://chatgpt.com/share/68079805-9254-8007-bf0c-73ddb135475e
 
 
 
@@ -33,19 +33,21 @@ https://stackoverflow.com/questions/9347076/how-to-remove-all-components-from-a-
 /**Class for LibrarayGUI */
 public class LibraryGUI {
     
+    //https://chatgpt.com/share/68079933-ac40-8007-9611-266f8cdca104
     private String registeredID = null;
     private String registeredPassWord = null; //stores registered ID and password
     private Book[] books = new Book[5]; //array holds 5 books in the library
-    private JFrame frame = new JFrame(); //creates GUI, https://docs.oracle.com/javase/tutorial/uiswing/components/frame.html
+    private JFrame frame = new JFrame("Library"); //creates GUI tab, https://docs.oracle.com/javase/tutorial/uiswing/components/frame.html
     private String[] requestedBooks = new String[100]; //it stores up to 100 book requests
-    private int requestedCount = 0; //keeps track of how may have been requested
-    private boolean isOnMainMenu = false; //I created a boolean(for the manager page) so that the manager page can only open in the main menu
+    private int requestedCount = 0; //keeps track of how many requested books there are
+    private boolean onMainMenu = false; //I created a boolean(for the manager page) so that the manager page can only open in the main menu(unless i found that i can enter the main page without login or register)
      // 2d array that can store up to 100 user, and sotre 2 value(id and password)
+     // https://chatgpt.com/share/68079b00-87bc-8007-bbc7-b6d8e23ea960
     private String[][] users = new String[100][2];
      // keeps track of how many useres are currently stored in the useres array
     private int userCount = 0;
     // declared a variable to hold an object of the class LibraryFileHandler
-    private LibraryFileHandler fileHandler;
+    private LibraryFile file;
 
 
 
@@ -62,12 +64,12 @@ public class LibraryGUI {
 
     /**LibraryGUI */
     public LibraryGUI(){
-        // callows the libraryfilehandler work with the library's data
-        fileHandler = new LibraryFileHandler(frame, books, users, userCount, requestedBooks, requestedCount, registeredID);
-        // updates userCout in the GUI to match how many useres were acutally loaded from the file
-        fileHandler.loadUsersFromFile();
-        userCount = fileHandler.loadUsersFromFile();  // reads the book data from books.txt and loads it into the books array
-        fileHandler.BooksFile();
+        // follows the libraryfilehandler work with the library's data, so this data goes to the library file.java
+        file = new LibraryFile(frame, books, users, userCount, requestedCount, registeredID);
+        // this line loads users from the users.txt file so that the user can relogin after the tab is closed and reopened
+        file.userFile();
+        userCount = file.userFile();  // this updates the counts for users
+        file.BooksFile();// reads the book data from books.txt and loads it into the tab(frame)
 
         frame.setSize(500, 500); // setting the frame size
        
@@ -75,7 +77,8 @@ public class LibraryGUI {
        // first, goes through the login page
         Login();
         
-// If the keyboard Alt + m is typed at the main menu
+// https://chatgpt.com/share/6807a1d8-7c14-8007-af9d-f9faf2270159
+// this method goes through if the keyboard Alt + m is typed at the main menu
 // KeyboardFocusManager is a class.
 // getCurrentKeyboardFocusManager() is a static method that returns the current keyboard manager object.
 // We store that object in variable 'a'.
@@ -87,7 +90,7 @@ a.addKeyEventDispatcher(new KeyEventDispatcher() {
     //created boolean to check if alt + m is typed
             public boolean dispatchKeyEvent(KeyEvent k) {
                 //if the alt and m key is pressed, and is in main meun, it goes to the manager page
-                if (k.isAltDown() && k.getKeyCode() == KeyEvent.VK_M && isOnMainMenu) {
+                if (k.isAltDown() && k.getKeyCode() == KeyEvent.VK_M && onMainMenu) {
                     ManagerPage();
                     return true;// this return true make the typing(alt + m) doesn't go to anywhere else(key blocked)
                 }
@@ -111,12 +114,14 @@ a.addKeyEventDispatcher(new KeyEventDispatcher() {
 /**Login page */
 private void Login(){
     // for the key press thing, it is false so that the manager page won't work
-     isOnMainMenu = false;
+     onMainMenu = false;
      // removes the original page's button, text..etc
      // this is the original page but for example if you go to the register page and come back, I don't want that register page text and button remain, so i delete it
+     // https://stackoverflow.com/questions/9347076/how-to-remove-all-components-from-a-jframe-in-java/32253547
     frame.getContentPane().removeAll();
     // tells that the frame use grid layout with 5 rows and 1 column
     frame.setLayout(new GridLayout(5,1));
+    // https://www.youtube.com/watch?v=Kmgo00avvEw&t=4523s
     
     // creates a label text on screen saying SC's LIBRARY placing it center
     JLabel title = new JLabel("SC's LIBRARY", JLabel.CENTER);
@@ -126,6 +131,7 @@ private void Login(){
     title.setForeground(new java.awt.Color(0, 102, 204)); // blue color
     //https://chatgpt.com/share/6802c383-62ec-8007-8a73-6152b3c3e856
 
+    // https://www.youtube.com/watch?v=Kmgo00avvEw&t=4523s
     // creates text box for ID
     JTextField id = new JTextField();
     // creates text box for Password
@@ -144,9 +150,11 @@ private void Login(){
     register.setFont(new Font("DialogInput", Font.BOLD, 16));
     
     // It makes the login button get clicked automatically when the user presses enter on the keyboard
-    frame.getRootPane().setDefaultButton(login);  
+    frame.getRootPane().setDefaultButton(login); 
+    // https://chatgpt.com/share/6807a3c1-9764-8007-a92b-87a0ae3c2e6a 
     
     // created a JPanel(mini box) and named a. the flowLayout shows where to place and the gap betwwen them
+    // https://www.youtube.com/watch?v=Kmgo00avvEw&t=12424s
     JPanel a = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
     //panel i want to add
     a.add(login);
@@ -157,7 +165,7 @@ private void Login(){
     frame.add(id);
     frame.add(passWord);
     frame.add(a);    
-
+    // https://chatgpt.com/share/6807a6dd-e398-8007-a3b7-f1f2f45acbe5
     // for login text box, if I click the box, 
     login.addActionListener(click -> {
         // make the user can text in the text box
@@ -176,13 +184,14 @@ private void Login(){
                 registeredID = ID;
                 registeredPassWord = PassWord;
                 // tells who is currently logged in by giving the file registeredID
-                 fileHandler.setRegisteredID(registeredID); 
+                // only need id cuz i am not going to tell there password on the logins.txt(who logged in)
+                 file.setRegisteredID(registeredID); 
                 found = true;
                 break;
             }
         } if (found) {
             // this tells to write login thing in the logins.txt
-        fileHandler.logSession("logged in");
+        file.logSession("logged in");
             MainMenu();
         } else {
             JOptionPane.showMessageDialog(frame, "Wrong ID or password"); 
@@ -216,7 +225,7 @@ private void Login(){
     /**Register Page */
     private void RegisterPage(){
     // so the manage page doesn't work
-    isOnMainMenu = false;
+    onMainMenu = false;
     
     // removes the original page's button, text..etc
     frame.getContentPane().removeAll();
@@ -232,39 +241,29 @@ private void Login(){
     JButton confirm = new JButton("Confirm");
     JButton back = new JButton("Back");
 
-    // same method as login
+    // same method as login and if press, when pressed confirm
     confirm.addActionListener(click -> {
         String newId = newid.getText();
         String newPass = new String(newpassWord.getPassword());
 
-
-
-
-
-
-
-
-
-
-
        if (!newId.isEmpty() && !newPass.isEmpty()) {
                 // this checks if the ueser id is already taken
-                if (fileHandler.isDuplicateUser(newId)) {
+                if (file.userChecker(newId)) {
                     JOptionPane.showMessageDialog(frame, "This ID already exists. Try a different one.");
                     return;
                 }
                 // stores the new id and pssword in the useres[][] array
-                users[userCount][0] = newId;
-                users[userCount][1] = newPass;
+                // users[row][column]
+                users[userCount][0] = newId; // stores the id in that column
+                users[userCount][1] = newPass; // stores the password next to that column
                 // increase user cout so the ntext user goes to next row
                 userCount++;
                 // updates the user count
-                fileHandler.setUserCount(userCount); 
+                file.setUserCount(userCount); 
                 // save user name with id and password in the users.txt
-                fileHandler.saveUserToFile("users.txt", newId, newPass);
+                file.saveUser("users.txt", newId, newPass);
                 registeredID = newId;
                 registeredPassWord = newPass;
-                 fileHandler.setRegisteredID(registeredID); // update the registered id in both gui and file 
 
                 JOptionPane.showMessageDialog(frame, "Registered successfully!");
                 Login();
@@ -274,17 +273,10 @@ private void Login(){
         });
 
 
-
-
-
-
-
-
-
-
-    // if pressed back go to login page
+    // if pressed back, go to login page
     back.addActionListener(click -> Login());
 
+    // when i press enter in goes to confirm
     //https://forums.oracle.com/ords/apexds/post/how-to-have-a-default-button-for-a-jpanel-9050
     frame.getRootPane().setDefaultButton(confirm);  
 
@@ -305,6 +297,7 @@ private void Login(){
     frame.revalidate();
     // tell the frame to repaint the tab
     frame.repaint();
+    // https://stackoverflow.com/questions/1097366/java-swing-revalidate-vs-repaint
 
 
 }
@@ -321,7 +314,7 @@ private void Login(){
     /**Main menu */
     private void MainMenu(){
         // the key alt + m works in here
-        isOnMainMenu = true;
+        onMainMenu = true;
         // remove the past things in the tab
         frame.getContentPane().removeAll();
         // same method....
@@ -342,7 +335,8 @@ private void Login(){
         find.addActionListener(click -> FinderPage());
         exit.addActionListener(click -> {
             // make the logins.txt to write logged out
-            fileHandler.logSession("logged out");
+            file.logSession("logged out");
+            // open back the login page
             Login();
         });
         request.addActionListener(click -> showRequestPage());
@@ -405,23 +399,19 @@ private void Login(){
                         book.checkOut(registeredID);
                         result.setText("Successfully checked out! Return in 2 weeks!");
 
-
-
-                        // saves the updated list of books to the books.txt
-                        fileHandler.saveBooksToFile("books.txt");
-                        // in the borrowlog.txt say it is borrowed by someone
-                        fileHandler.logBorrowAction("checked out", book);
-                        
-
+                        // saves the updated list of books to the books.txt(true or false and |borrower|)
+                        file.saveBooksToFile();
+                        // in the borrowTime.txt say it is borrowed by someone
+                        file.borrowTime("checked out", book);
                         
                         // else if the user clicked check in button and book is checked out
-                    }else if(action.equals("Check In") && book.checkedout()){
+        }else if(action.equals("Check In") && book.checkedout()){
     if (book.getBorrower().equals(registeredID)) {
         book.checkIn();
         result.setText("Successfully checked in! Thank you!");
         //same thing as above
-    fileHandler.saveBooksToFile("books.txt");
-    fileHandler.logBorrowAction("checked in", book);
+    file.saveBooksToFile();
+    file.borrowTime("checked in", book);
 
     } else {
         result.setText("You did not check out this book.");
@@ -567,7 +557,7 @@ private void ManagerPage() {
     });
 // same thing
     JButton export = new JButton("Export Book Catalog");
-    export.addActionListener(click -> fileHandler.CatalogFile());
+    export.addActionListener(click -> file.CatalogFile());
     
     JButton back = new JButton("Back to Main Menu");
     back.addActionListener(click -> MainMenu());
@@ -660,3 +650,19 @@ private void ManagerPage() {
         frame.repaint();
     }
 }    
+/* So basically what happens:
+ * - when I first run the code, it gets book data from the books.txt and users data in the users.txt
+ * - the fist tab opens is login tab
+ * - to login, you need to either register or put the existing user id and password(if there is an existing id, the user Checker method print that the id alread exist) btw I set the enter key default as login 
+ * - if you log in, the login data shows up in to the logins.txt
+ * - if you go to the main page, there are 5 buttons you can click: Check in/out, book finder, book request, exit
+ * - if you press book finder, and write a title keyword, if there are any books that match with the keyword(think every letter in lowercase) it shows up(getting data from the books.txt) the book, with if it's available and the book code
+ * - if you go to the check out button, you can write the book code and check out. this activity will show out in the borrowTime.txt
+ * - now you can check in the book you borrowed(only borrowed id can check in) and this will also stroe in the borrowTime.txt file
+ * - if you click the book reqeust button, you can reqeust book, which can store 100 book requests(I might change the limit)
+ * - if you press exit button, you will log out, and this data will be stored in the logins.txt file as 'log out'(with name and time)
+ * - lastly, there is a secret key, Alt + m, which can be only activate in the main menu, and if you press it, the manager page comes out.
+ * - in the manager page, you can see the books reqeusted, and there are 3 buttons, clear requests, back to main menu, catalog
+ * - if you press the catalog button the data shows up in the catalog.txt showing the current state of the books
+*/
+
