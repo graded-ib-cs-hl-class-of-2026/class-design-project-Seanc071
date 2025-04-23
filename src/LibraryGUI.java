@@ -18,8 +18,6 @@ import javax.swing.JTextField; // explained below
 
 
 
-
-
 /*
 What I used to learn GUI and build this code:
 https://runestone.academy/ns/books/published/csawesome/Unit6-Arrays/toctree.html
@@ -65,7 +63,7 @@ public class LibraryGUI {
     /**LibraryGUI */
     public LibraryGUI(){
         // follows the libraryfilehandler work with the library's data, so this data goes to the library file.java
-        file = new LibraryFile(frame, books, users, userCount, requestedCount, registeredID);
+        file = new LibraryFile(frame, books, users, userCount, requestedCount, registeredID); 
         // this line loads users from the users.txt file so that the user can relogin after the tab is closed and reopened
         file.userFile();
         userCount = file.userFile();  // this updates the counts for users
@@ -261,7 +259,7 @@ private void Login(){
                 // updates the user count
                 file.setUserCount(userCount); 
                 // save user name with id and password in the users.txt
-                file.saveUser("users.txt", newId, newPass);
+                file.saveUser(newId, newPass);
                 registeredID = newId;
                 registeredPassWord = newPass;
 
@@ -640,7 +638,7 @@ private void ManagerPage() {
         button.add(search);
         button.add(back);
          
-        // add the things listed above
+        // add the things into the frame listed above
         frame.add(new JLabel("Book Finder", JLabel.CENTER));
         frame.add(searching);
         frame.add(result);

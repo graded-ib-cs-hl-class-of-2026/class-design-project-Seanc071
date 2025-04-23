@@ -116,14 +116,15 @@ public class LibraryFile {
 }
 
     // putting in users.txt
-    public void saveUser(String filename, String id, String password) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
-            writer.write(id + "|" + password);
-            writer.newLine();
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(frame, "Error saving user: " + e.getMessage());
-        }
+  public void saveUser(String id, String password) {
+    try (BufferedWriter writer = new BufferedWriter(new FileWriter("users.txt", true))) {
+        writer.write(id + "|" + password);
+        writer.newLine();
+    } catch (IOException e) {
+        JOptionPane.showMessageDialog(frame, "Error saving user: " + e.getMessage());
     }
+}
+
 // check if there are same user id
     public boolean userChecker(String id) {
         for (int i = 0; i < userCount; i++) {

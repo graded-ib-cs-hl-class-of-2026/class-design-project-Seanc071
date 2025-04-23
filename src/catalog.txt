@@ -1,5 +1,0 @@
-Title: Harry Potter | Author: J.K. Rowling | Code: 0001 | Available
-Title: Maze Runner | Author: James Dashner | Code: 0002 | Available
-Title: Hunger Game | Author: Suzanne Collins | Code: 0003 | Available
-Title: Empire of Ants | Author: Bernard Werber | Code: 0004 | Checked out by: sean
-Title: Diary of a Wimpy Kid | Author: Jeff Kinney | Code: 0005 | Available
