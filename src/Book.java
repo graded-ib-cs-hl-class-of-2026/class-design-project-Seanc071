@@ -7,6 +7,7 @@ public class Book {
     private String code;
 
     // constructor: called when creating a new book
+    //initializes a new book object with the information i gave
     // it sets the initial values for all the book info
     public Book(String title, String author, boolean checkedout, String borrower, String code){
         this.title = title;

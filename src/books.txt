@@ -1,5 +1,5 @@
-Harry Potter|J.K. Rowling|false||0001
-Maze Runner|James Dashner|false||0002
-Hunger Game|Suzanne Collins|false||0003
+Harry Potter|J.K. Rowling|false|a|0001
+Maze Runner|James Dashner|false|a|0002
+Hunger Game|Suzanne Collins|false|a|0003
 Empire of Ants|Bernard Werber|false||0004
 Diary of a Wimpy Kid|Jeff Kinney|false||0005
